@@ -4,50 +4,52 @@ import (
 	"fmt"
 )
 
-var ch1 = make(chan int)
-var ch2 = make(chan int)
+var channel1 = make(chan int)
+var channel2 = make(chan int)
 
-func philosopher(seat int) {
-	count := 0
-	forks := 0
+func philosopher(philosopherPosition int) {
+	portionCount := 0
+	forkCount := 0
 
-	for count < 3 {
-		fork := <-ch1
+	for portionCount < 3 {
+		forkPosition := <-channel1
 
-		if fork == seat || fork == (seat+1)%5 {
-			forks++
-			fmt.Println("Philosopher", seat, "get fork", fork)
+		if forkPosition == philosopherPosition || forkPosition == (philosopherPosition+1)%5 {
+			forkCount++
+			fmt.Println("Philosopher", philosopherPosition, "accepted fork", forkPosition)
 		} else {
-			ch2 <- fork
+			channel2 <- forkPosition
 		}
 
-		if forks == 2 {
-			count++
-			fmt.Println("Philosopher", seat, "has eaten", count, "portion")
-			ch2 <- seat
-			ch2 <- (seat + 1) % 5
+		if forkCount == 2 {
+			portionCount++
+			forkCount = 0
+			fmt.Println("Philosopher", philosopherPosition, "has eaten", portionCount, "portion")
+			channel2 <- philosopherPosition
+			channel2 <- (philosopherPosition + 1) % 5
 		}
 	}
+
+	fmt.Println("Philosopher", philosopherPosition, "is done")
 }
 
-func fork(seat int) {
-	inUse := false
+func fork(forkPosition int) {
+	forkInUse := false
 
 	for {
-		if !inUse {
-			ch1 <- seat
-			inUse = true
+		if !forkInUse {
+			channel1 <- forkPosition
+			forkInUse = true
 		} else {
-			x := <-ch2
+			x := <-channel2
 
-			if x != seat {
-				ch2 <- x
+			if x != forkPosition {
+				channel2 <- x
 			} else {
-				inUse = false
+				forkInUse = false
 			}
 		}
 	}
-
 }
 
 func main() {
@@ -57,6 +59,5 @@ func main() {
 	}
 
 	for {
-
 	}
 }
