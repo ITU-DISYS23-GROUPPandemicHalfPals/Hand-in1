@@ -11,18 +11,19 @@ func philosopher(seat int) {
 	count := 0
 	forks := 0
 
-	for {
+	for count < 3 {
 		fork := <-ch1
 
 		if fork == seat || fork == (seat+1)%5 {
 			forks++
+			fmt.Println("Philosopher", seat, "get fork", fork)
 		} else {
 			ch2 <- fork
 		}
 
 		if forks == 2 {
 			count++
-			fmt.Println("Philosopher", seat, "has eaten", count, "portion.")
+			fmt.Println("Philosopher", seat, "has eaten", count, "portion")
 			ch2 <- seat
 			ch2 <- (seat + 1) % 5
 		}
