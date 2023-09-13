@@ -7,7 +7,7 @@ import (
 
 const portions = 3
 const count = 5
-const wait = 100
+const wait = 200
 
 type channels struct {
 	in  []chan bool
@@ -26,24 +26,20 @@ func philosopher(position int, c *channels) {
 
 		if len(c.in[position]) == 1 {
 			leftFork = <-c.in[position]
-		}
-
-		if !leftFork {
+		} else {
 			continue
 		}
 
 		if len(c.in[(position+1)%count]) == 1 {
 			rightFork = <-c.in[(position+1)%count]
-		}
-
-		if !rightFork {
+		} else {
 			c.out[position] <- true
 			continue
 		}
 
 		if leftFork && rightFork {
 			eatCount++
-			fmt.Println("Philosopher", position, "is eating.")
+			fmt.Println("Philosopher", position, "is eating. Eat count =", eatCount)
 			time.Sleep(wait)
 			fmt.Println("Philosopher", position, "is thinking.")
 
