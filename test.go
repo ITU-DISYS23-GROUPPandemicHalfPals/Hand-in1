@@ -64,14 +64,10 @@ func main() {
 	for i := 0; i < count; i++ {
 		c.in[i] = make(chan bool, 1)
 		c.out[i] = make(chan bool, 1)
-	}
-
-	for i := 0; i < count; i++ {
-		feast.Add(1)
 		go philosopher(i, c)
 		go fork(i, c)
+		feast.Add(1)
 	}
 
 	feast.Wait()
-
 }
