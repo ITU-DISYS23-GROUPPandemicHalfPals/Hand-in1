@@ -1,6 +1,5 @@
 package main
 
-/*
 import (
 	"fmt"
 )
@@ -8,7 +7,7 @@ import (
 var channel1 = make(chan int)
 var channel2 = make(chan int)
 
-func philosopher(philosopherPosition int) {
+func philosopher2(philosopherPosition int) {
 	portionCount := 0
 	forkCount := 0
 
@@ -34,7 +33,7 @@ func philosopher(philosopherPosition int) {
 	fmt.Println("Philosopher", philosopherPosition, "is done")
 }
 
-func fork(forkPosition int) {
+func fork2(forkPosition int) {
 	forkInUse := false
 
 	for {
@@ -53,13 +52,12 @@ func fork(forkPosition int) {
 	}
 }
 
-func main() {
+func main2() {
 	for i := 0; i < 5; i++ {
-		go fork(i)
-		go philosopher(i)
+		go fork2(i)
+		go philosopher2(i)
 	}
 
 	for {
 	}
 }
-*/
