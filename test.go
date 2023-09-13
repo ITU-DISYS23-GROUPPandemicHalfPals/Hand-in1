@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -9,12 +10,15 @@ const portions = 3
 const count = 5
 const wait = 100
 
+var feast sync.WaitGroup
+
 type channels struct {
 	in  []chan bool
 	out []chan bool
 }
 
 func philosopher(position int, c *channels) {
+	defer feast.Done()
 	fmt.Println("Philosopher", position, "is thinking.")
 
 	eatCount := 0
@@ -60,10 +64,14 @@ func main() {
 	for i := 0; i < count; i++ {
 		c.in[i] = make(chan bool, 1)
 		c.out[i] = make(chan bool, 1)
+	}
+
+	for i := 0; i < count; i++ {
+		feast.Add(1)
 		go philosopher(i, c)
 		go fork(i, c)
 	}
 
-	for {
-	}
+	feast.Wait()
+
 }
