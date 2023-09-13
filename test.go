@@ -41,10 +41,11 @@ func philosopher(position int, c *channels) {
 		eatCount++
 		fmt.Println("Philosopher", position, "is eating. Eat count =", eatCount)
 		time.Sleep(wait)
-		fmt.Println("Philosopher", position, "is thinking.")
 
 		c.out[position] <- true
 		c.out[(position+1)%count] <- true
+
+		fmt.Println("Philosopher", position, "is thinking.")
 	}
 }
 
