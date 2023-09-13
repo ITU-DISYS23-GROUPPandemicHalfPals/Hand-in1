@@ -23,8 +23,6 @@ func philosopher(position int, c *channels) {
 
 	eatCount := 0
 	for eatCount < portions {
-		time.Sleep(wait)
-
 		if len(c.in[position]) == 1 {
 			<-c.in[position]
 		} else {
@@ -46,6 +44,7 @@ func philosopher(position int, c *channels) {
 		c.out[(position+1)%count] <- true
 
 		fmt.Println("Philosopher", position, "is thinking.")
+		time.Sleep(wait)
 	}
 }
 
