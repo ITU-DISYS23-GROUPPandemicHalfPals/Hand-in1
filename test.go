@@ -23,11 +23,7 @@ func philosopher(position int, c *channels) {
 
 	eatCount := 0
 	for eatCount < portions {
-		if len(c.in[position]) == 1 {
-			<-c.in[position]
-		} else {
-			continue
-		}
+		<-c.in[position]
 
 		if len(c.in[(position+1)%count]) == 1 {
 			<-c.in[(position+1)%count]
