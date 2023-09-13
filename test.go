@@ -8,7 +8,7 @@ import (
 
 const portions = 3
 const count = 5
-const wait = 100
+const wait = time.Second / 100
 
 var feast sync.WaitGroup
 
