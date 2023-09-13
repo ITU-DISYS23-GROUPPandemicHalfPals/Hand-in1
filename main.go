@@ -22,7 +22,7 @@ func philosopher(position int, c *channels) {
 	fmt.Println("Philosopher", position, "is thinking.")
 
 	eatCount := 0
-	for eatCount < portions {
+	for {
 		<-c.in[position]
 
 		if len(c.in[(position+1)%count]) == 1 {
@@ -39,9 +39,15 @@ func philosopher(position int, c *channels) {
 		c.out[position] <- true
 		c.out[(position+1)%count] <- true
 
+		if eatCount == portions {
+			break
+		}
+
 		fmt.Println("Philosopher", position, "is thinking.")
 		time.Sleep(wait)
 	}
+
+	fmt.Println("Philosopher", position, "is done.")
 }
 
 func fork(position int, c *channels) {
@@ -66,4 +72,6 @@ func main() {
 	}
 
 	feast.Wait()
+
+	fmt.Println("Every philosopher is done.")
 }
