@@ -2,68 +2,62 @@ package main
 
 import (
 	"fmt"
-	"sync"
-	"time"
 )
 
-const portions = 3
-const count = 5
-const wait = time.Second / 100
+var channel1 = make(chan int)
+var channel2 = make(chan int)
 
-var feast sync.WaitGroup
+func philosopher2(philosopherPosition int) {
+	portionCount := 0
+	forkCount := 0
 
-type channels struct {
-	in  []chan bool
-	out []chan bool
-}
+	for portionCount < 3 {
+		forkPosition := <-channel1
 
-func philosopher(position int, c *channels) {
-	defer feast.Done()
-	fmt.Println("Philosopher", position, "is thinking.")
-
-	eatCount := 0
-	for eatCount < portions {
-		<-c.in[position]
-
-		if len(c.in[(position+1)%count]) == 1 {
-			<-c.in[(position+1)%count]
+		if forkPosition == philosopherPosition || forkPosition == (philosopherPosition+1)%5 {
+			forkCount++
+			fmt.Println("Philosopher", philosopherPosition, "accepted fork", forkPosition)
 		} else {
-			c.out[position] <- true
-			continue
+			channel2 <- forkPosition
 		}
 
-		eatCount++
-		fmt.Println("Philosopher", position, "is eating. Eat count =", eatCount)
-		time.Sleep(wait)
-
-		c.out[position] <- true
-		c.out[(position+1)%count] <- true
-
-		fmt.Println("Philosopher", position, "is thinking.")
-		time.Sleep(wait)
+		if forkCount == 2 {
+			portionCount++
+			forkCount = 0
+			fmt.Println("Philosopher", philosopherPosition, "has eaten", portionCount, "portion")
+			channel2 <- philosopherPosition
+			channel2 <- (philosopherPosition + 1) % 5
+		}
 	}
+
+	fmt.Println("Philosopher", philosopherPosition, "is done")
 }
 
-func fork(position int, c *channels) {
+func fork2(forkPosition int) {
+	forkInUse := false
+
 	for {
-		c.in[position] <- true
-		<-c.out[position]
+		if !forkInUse {
+			channel1 <- forkPosition
+			forkInUse = true
+		} else {
+			x := <-channel2
+
+			if x != forkPosition {
+				channel2 <- x
+			} else {
+				forkInUse = false
+			}
+		}
 	}
 }
 
-func main() {
-	c := new(channels)
-
-	c.in = make([]chan bool, count)
-	c.out = make([]chan bool, count)
-
-	for i := 0; i < count; i++ {
-		c.in[i] = make(chan bool, 1)
-		c.out[i] = make(chan bool, 1)
-		go philosopher(i, c)
-		go fork(i, c)
-		feast.Add(1)
+func main2() {
+	for i := 0; i < 5; i++ {
+		go fork2(i)
+		go philosopher2(i)
 	}
 
-	feast.Wait()
+	for {
+	}
 }
