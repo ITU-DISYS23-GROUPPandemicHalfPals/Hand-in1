@@ -1,3 +1,14 @@
+/*
+// A deadlock occurs in a case where every philosopher takes a fork to the same side of them.
+// Therefore we have to figure out how to avoid that problem.
+//
+// The way we chose to solve this problem, is for every philosopher to take the fork to the left of them.
+// Then they check if the right fork is available, if it is the philosopher will eat.
+// When the right fork is not available, the philosopher will put the left fork back.
+//
+// This will make sure that a fork will never be locked with one philosopher.
+*/
+
 package main
 
 import (
